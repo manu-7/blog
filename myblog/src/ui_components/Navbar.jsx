@@ -1,14 +1,34 @@
 import { Switch } from "@/components/ui/switch";
 import { FaHamburger } from "react-icons/fa";
-import { useState } from "react";
 import ResponsiveNavBar from "./ResponsiveNavBar";
+import { useState, useEffect } from "react";
 import { Link, NavLink } from "react-router-dom";
 
-const NavBar = ({ darkMode, handleDarkMode }) => {
-  const [showResponsiveNav, setShowResponsiveNav] = useState(false);
+const NavBar = ({
+  darkMode,
+  handleDarkMode,
+  isAuthenticated,
+  username,
+  setIsAuthenticated,
+  setUsername,
+}) => {
+  const [showNavBar, setShowNavBar] = useState(false);
 
-  const toggleResponsiveNav = () => {
-    setShowResponsiveNav((prev) => !prev);
+  useEffect(() => {
+    // Retrieve username from localStorage on initial load
+    const storedUsername = localStorage.getItem("username");
+    if (storedUsername) {
+      setUsername(storedUsername); // Set username from localStorage
+      setIsAuthenticated(true); // Set as authenticated
+    }
+  }, [setUsername, setIsAuthenticated]);
+
+  const logout = () => {
+    localStorage.removeItem("access");
+    localStorage.removeItem("refresh");
+    localStorage.removeItem("username"); // Remove username on logout
+    setIsAuthenticated(false);
+    setUsername(null);
   };
 
   return (
@@ -18,57 +38,73 @@ const NavBar = ({ darkMode, handleDarkMode }) => {
           MindFolio
         </Link>
 
-        <ul className="flex items-center justify-end gap-5 text-[#3B3C4A] lg:flex-1 max-md:hidden dark:text-[#FFFFFF]">
-          {/* <li>
-            <NavLink
-              to="/profile"
-              className={({ isActive }) =>
-                isActive
-                  ? "bg-blue-600 text-white px-4 py-1.5 rounded-[5px] font-medium transition"
-                  : "text-[#3B3C4A] dark:text-[#f5f5f6] hover:text-blue-600 transition"
-              }
-            >
-              Hi, Manu
-            </NavLink>
-          </li> */}
+        <ul className="flex items-center justify-end gap-9 text-[#3B3C4A] lg:flex-1 max-md:hidden dark:text-[#FFFFFF]">
+          {isAuthenticated ? (
+            <>
+              <li>
+                <NavLink
+                  to={`/profile/${username}`}
+                  className={({ isActive }) => (isActive ? "active" : "")}
+                >
+                  Hi, {username}
+                </NavLink>
+              </li>
+              <li onClick={logout} className="cursor-pointer">
+                Logout
+              </li>
+            </>
+          ) : (
+            <>
+              <li>
+                <NavLink
+                  to="/signin"
+                  className={({ isActive }) => (isActive ? "active" : "")}
+                >
+                  Login
+                </NavLink>
+              </li>
 
-          <li>Logout</li>
-          <li>Login</li>
-          <li>
+              <li>
+                <NavLink
+                  to="/signup"
+                  className={({ isActive }) => (isActive ? "active" : "")}
+                >
+                  Register
+                </NavLink>
+              </li>
+            </>
+          )}
+
+          <li className="font-semibold">
             <NavLink
-              to="/signup"
-              className={({ isActive }) =>
-                isActive
-                  ? "bg-blue-600 text-white px-4 py-1.5 rounded-[5px] font-medium transition"
-                  : "text-[#3B3C4A] dark:text-[#f5f5f6] hover:text-blue-600 transition"
-              }
+              to="/create"
+              className={({ isActive }) => (isActive ? "active" : "")}
             >
-              Register
+              Create Post
             </NavLink>
           </li>
-          <li className="font-semibold">Create post</li>
         </ul>
 
         {/* Theme Switch */}
         <Switch
-          checked={darkMode}
           onCheckedChange={handleDarkMode}
+          checked={darkMode}
           className={`transition-all duration-300 ${darkMode ? 'bg-white' : 'bg-black'}`}
         />
 
         {/* Hamburger Icon */}
         <FaHamburger
-          onClick={toggleResponsiveNav}
           className="text-2xl cursor-pointer hidden max-md:block dark:text-white"
+          onClick={() => setShowNavBar((curr) => !curr)}
         />
       </nav>
 
       {/* Conditionally show ResponsiveNavBar */}
-      {showResponsiveNav && (
+      {showNavBar && (
         <ResponsiveNavBar
-          isAuthenticated={true}
-          username="Manu"
-          logout={() => alert("Logging out...")}
+          isAuthenticated={isAuthenticated}
+          username={username}
+          logout={logout}
         />
       )}
     </>

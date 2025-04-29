@@ -1,4 +1,4 @@
-import React from "react"
+import { NavLink } from 'react-router-dom'
 
 const ResponsiveNavBar = ({isAuthenticated, username, logout}) => {
   return (
@@ -6,11 +6,42 @@ const ResponsiveNavBar = ({isAuthenticated, username, logout}) => {
     <ul className="flex items-center justify-center gap-6 text-[#3B3C4A] lg:flex-1 flex-col dark:text-[#FFFFFF]">
 
    
-    <li>Hi, Manu</li>
-        <li>Logout</li>
-        <li>Login</li>
-        <li>Register</li>
-        <li className="font-semibold">Create post</li>
+    {isAuthenticated ? (
+            <>
+              <li>Hi, {username}</li>
+              <li onClick={logout} className="cursor-pointer">Logout</li>
+            </>
+          ) : (
+            <>
+              <li>
+                <NavLink
+                  to="/signin"
+                  className={({ isActive }) => (isActive ? "active" : "")}
+                >
+                  Login
+                </NavLink>
+              </li>
+
+              <li>
+                <NavLink
+                  to="/signup"
+                  className={({ isActive }) => (isActive ? "active" : "")}
+                >
+                  Register
+                </NavLink>
+              </li>
+            </>
+          )}
+
+          <li className="font-semibold">
+            <NavLink
+              to="/create"
+              className={({ isActive }) => (isActive ? "active" : "")}
+            >
+              Create Post
+            </NavLink>
+          </li>
+
 
 
         

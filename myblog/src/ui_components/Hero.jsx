@@ -1,35 +1,47 @@
-import pic from "../images/profile.png";
 import { FaInstagram } from "react-icons/fa";
 import { FaFacebookF } from "react-icons/fa";
 import { BsTwitterX } from "react-icons/bs";
 import { FaYoutube } from "react-icons/fa";
-
+import { HiPencilAlt } from "react-icons/hi";
 
 const Hero = ({ userInfo, authUsername, toggleModal }) => {
+  // Check if userInfo and profile_picture are available
+  const profilePicUrl = userInfo?.profile_picture
+    ? `${process.env.REACT_APP_BASE_URL}${userInfo.profile_picture}` // Dynamically set the profile picture URL
+    : '/default-profile-pic.jpg'; // Fallback image if profile picture is not available
+
   return (
     <div className="padding-x py-9 max-container flex flex-col items-center justify-center gap-4 bg-[#F6F6F7] dark:bg-[#242535] rounded-md">
       <div className="flex gap-4">
         <div className="w-[70px] h-[70px] rounded-full overflow-hidden">
           <img
-            src={pic}
+            src={profilePicUrl} // Use the dynamic image URL or fallback
             className="w-[70px] h-[70px] rounded-full object-cover"
+            alt={`${userInfo?.first_name} ${userInfo?.last_name}`} // Add alt text for accessibility
           />
         </div>
 
         <span>
           <p className="text-[18px] text-[#181A2A] dark:text-white">
-            Manu Singh
+            {userInfo?.first_name} {userInfo?.last_name}
           </p>
           <p className="text-[14px] text-[#696A75] font-thin dark:text-[#BABABF]">
-            Fullstack developer
+            {userInfo?.job_title || "Collaborator & Editor"}
           </p>
         </span>
 
-        
+        {userInfo?.username === authUsername && (
+          <span>
+            <HiPencilAlt
+              className="dark:text-white text-2xl cursor-pointer"
+              onClick={toggleModal}
+            />
+          </span>
+        )}
       </div>
 
       <p className="text-[#3B3C4A] text-[16px] max-md:leading-[2rem] lg:leading-normal lg:mx-[200px] text-center dark:text-[#BABABF]">
-        Hi, I'm Manu Singh, a passionate UI/UX designer and web developer with expertise in HTML, CSS, JavaScript, React, and Django. I’m currently an intern at Decmeds, where I’m gaining valuable experience in designing user-friendly interfaces and building responsive websites. I love combining my creativity with technical skills to build solutions that not only look good but also provide a seamless user experience. In my free time, I enjoy  exploring the latest trends in design and development. I'm always eager to learn and grow in this field, and I'm excited about the opportunities ahead.
+        {userInfo?.bio}
       </p>
 
       <div className="flex gap-4 justify-center items-center text-white text-xl">

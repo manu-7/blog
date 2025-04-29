@@ -1,11 +1,9 @@
-
 {
-    "compilerOptions": {
-      "baseUrl": ".",          // base directory for relative imports
-      "paths": {
-        "@/*": ["src/*"]       // use 'src' as the alias
-      }
-    },
-    "include": ["src/**/*", "../jsconfig.app.json"]
-  }
-  
+  "compilerOptions": {
+    "baseUrl": ".",  
+    "paths": {
+      "@/*": ["src/*"]
+    }
+  },
+  "include": ["src"]
+}

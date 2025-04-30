@@ -10,66 +10,70 @@ import { useForm } from "react-hook-form";
 import { Link } from "react-router-dom";
 import { toast } from "react-toastify";
 
-const SignupPage = ({ userInfo, updateForm, toggleModal }) => {
+const SignupPage = ({ userInfo = {}, updateForm = false, toggleModal }) => {
+  const queryClient = useQueryClient();
 
-  console.log(userInfo)
-
-  const queryClient = useQueryClient()
-
-  const { register, handleSubmit, formState, reset, watch } = useForm({defaultValues: userInfo ? userInfo : {}});
-  const { errors } = formState;
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+    reset,
+    watch,
+  } = useForm({
+    defaultValues: updateForm
+      ? {
+          username: userInfo.username || "",
+          first_name: userInfo.first_name || "",
+          last_name: userInfo.last_name || "",
+          job_title: userInfo.job_title || "",
+          bio: userInfo.bio || "",
+        }
+      : {},
+  });
 
   const password = watch("password");
 
   const updateProfileMutation = useMutation({
-    mutationFn: (data) => updateProfile(data),
+    mutationFn: updateProfile,
     onSuccess: () => {
-      toast.success("Profile updated successfully!")
-      toggleModal()
-      queryClient.invalidateQueries({queryKey: ["users", userInfo?.username]})
+      toast.success("Profile updated successfully!");
+      toggleModal?.();
+      queryClient.invalidateQueries({ queryKey: ["users", userInfo?.username] });
     },
-
     onError: (err) => {
-      toast.error(err.message)
-    }
-  })
+      toast.error(err.message || "Failed to update profile");
+    },
+  });
 
   const mutation = useMutation({
-    mutationFn: (data) => registerUser(data),
+    mutationFn: registerUser,
     onSuccess: () => {
-      toast.success("You have successfully created an account!!!");
+      toast.success("You have successfully created an account!");
       reset();
     },
-
     onError: (err) => {
-      toast.error(err.message);
+      toast.error(err.message || "Failed to sign up");
     },
   });
 
   function onSubmit(data) {
-    if(updateForm){
-      const formData = new FormData()
-      formData.append("username", data.username)
-      formData.append("first_name", data.first_name)
-      formData.append("last_name", data.last_name)
-      formData.append("job_title", data.job_title)
-      formData.append("bio", data.bio)
+    if (updateForm) {
+      const formData = new FormData();
+      formData.append("username", data.username);
+      formData.append("first_name", data.first_name);
+      formData.append("last_name", data.last_name);
+      formData.append("job_title", data.job_title);
+      formData.append("bio", data.bio);
 
-      if(data.profile_picture && data.profile_picture[0]){
-        if(data.profile_picture[0] != "/"){
-          formData.append("profile_picture", data.profile_picture[0])
-        }
+      const file = data.profile_picture?.[0];
+      if (file && file instanceof File) {
+        formData.append("profile_picture", file);
       }
 
-      updateProfileMutation.mutate(formData)
-
-
+      updateProfileMutation.mutate(formData);
+    } else {
+      mutation.mutate(data);
     }
-
-    else{
-      mutation.mutate(data)
-    }
-    
   }
 
   return (
@@ -91,10 +95,9 @@ const SignupPage = ({ userInfo, updateForm, toggleModal }) => {
         </p>
       </div>
 
+      {/* Username */}
       <div>
-        <Label htmlFor="username" className="dark:text-[97989F]">
-          Username
-        </Label>
+        <Label htmlFor="username">Username</Label>
         <Input
           type="text"
           id="username"
@@ -106,13 +109,11 @@ const SignupPage = ({ userInfo, updateForm, toggleModal }) => {
               message: "Username must be at least 3 characters",
             },
           })}
-          className="border-2 border-[#141624] dark:border-[#3B3C4A] focus:outline-0 h-[40px] w-[300px]"
         />
-        {errors?.username?.message && (
-          <InputError error={errors.username.message} />
-        )}
+        {errors?.username && <InputError error={errors.username.message} />}
       </div>
 
+      {/* First Name */}
       <div>
         <Label htmlFor="first_name">First Name</Label>
         <Input
@@ -120,19 +121,17 @@ const SignupPage = ({ userInfo, updateForm, toggleModal }) => {
           id="first_name"
           placeholder="Enter first name"
           {...register("first_name", {
-            required: "Firstname is required",
+            required: "First name is required",
             minLength: {
               value: 3,
-              message: "Firstname must be at least 3 characters",
+              message: "First name must be at least 3 characters",
             },
           })}
-          className="border-2 border-[#141624] dark:border-[#3B3C4A] focus:outline-0 h-[40px] w-[300px]"
         />
-        {errors?.first_name?.message && (
-          <InputError error={errors.first_name.message} />
-        )}
+        {errors?.first_name && <InputError error={errors.first_name.message} />}
       </div>
 
+      {/* Last Name */}
       <div>
         <Label htmlFor="last_name">Last Name</Label>
         <Input
@@ -140,146 +139,133 @@ const SignupPage = ({ userInfo, updateForm, toggleModal }) => {
           id="last_name"
           placeholder="Enter last name"
           {...register("last_name", {
-            required: "Lastname is required",
+            required: "Last name is required",
             minLength: {
               value: 3,
-              message: "Lastname must be at least 3 characters",
+              message: "Last name must be at least 3 characters",
             },
           })}
-          className="border-2 border-[#141624] dark:border-[#3B3C4A] focus:outline-0 h-[40px] w-[300px]"
         />
-        {errors?.last_name?.message && (
-          <InputError error={errors.last_name.message} />
-        )}
+        {errors?.last_name && <InputError error={errors.last_name.message} />}
       </div>
 
-        {updateForm && <div>
-        <Label htmlFor="job_title" className="dark:text-[97989F]">
-          Job Title
-        </Label>
-        <Input
-          type="text"
-          id="job_title"
-          placeholder="Enter Job Title"
-          {...register("job_title", {
-            required: "Your job title is required",
-            minLength: {
-              value: 3,
-              message: "Your job title must be at least 3 characters",
-            },
-          })}
-          className="border-2 border-[#141624] dark:border-[#3B3C4A] focus:outline-0 h-[40px] w-[300px]"
-        />
-        {errors?.job_title?.message && (
-          <InputError error={errors.job_title.message} />
-        )}
-      </div>}
+      {/* Update-specific Fields */}
+      {updateForm && (
+        <>
+          {/* Job Title */}
+          <div>
+            <Label htmlFor="job_title">Job Title</Label>
+            <Input
+              type="text"
+              id="job_title"
+              placeholder="Enter job title"
+              {...register("job_title", {
+                required: "Job title is required",
+                minLength: {
+                  value: 3,
+                  message: "Job title must be at least 3 characters",
+                },
+              })}
+            />
+            {errors?.job_title && <InputError error={errors.job_title.message} />}
+          </div>
 
+          {/* Bio */}
+          <div>
+            <Label htmlFor="bio">Bio</Label>
+            <Textarea
+              id="bio"
+              placeholder="Tell us more about you"
+              {...register("bio", {
+                required: "Your bio is required",
+                minLength: {
+                  value: 10,
+                  message: "The bio must be at least 10 characters",
+                },
+              })}
+              className="h-[180px]"
+            />
+            {errors?.bio && <InputError error={errors.bio.message} />}
+          </div>
 
-      {updateForm && <div>
-        <Label htmlFor="content">Bio</Label>
-        <Textarea
-          id="content"
-          placeholder="Tell us more about you"
-          {...register("bio", {
-            required: "Your bio is required",
-            minLength: {
-              value: 10,
-              message: "The content must be at least 10 characters",
-            },
-          })}
-          className="border-2 border-[#141624] dark:border-[#3B3C4A] focus:outline-0 h-[180px]  w-[300px] text-justify"
-        />
-        {errors?.bio?.message && (
-          <InputError error={errors.bio.message} />
-        )}
-      </div>}
+          {/* Profile Picture */}
+          <div className="w-full">
+            <Label htmlFor="profile_picture">Profile Picture</Label>
+            <Input
+              type="file"
+              id="profile_picture"
+              accept="image/*"
+              {...register("profile_picture")}
+            />
+          </div>
+        </>
+      )}
 
-      {updateForm && <div className="w-full">
-        <Label htmlFor="profile_picture">Profile Picture</Label>
-        <Input
-          type="file"
-          id="picture"
-          {...register("profile_picture", {
-            required: false,
-          })}
-          className="border-2 border-[#141624] dark:border-[#3B3C4A] focus:outline-0 h-[40px] w-full max-sm:w-[300px] max-sm:text-[14px]"
-        />
+      {/* Signup-only Fields */}
+      {!updateForm && (
+        <>
+          {/* Password */}
+          <div>
+            <Label htmlFor="password">Password</Label>
+            <Input
+              type="password"
+              id="password"
+              placeholder="Enter password"
+              {...register("password", {
+                required: "Password is required",
+                minLength: {
+                  value: 8,
+                  message: "Password must be at least 8 characters",
+                },
+              })}
+            />
+            {errors?.password && <InputError error={errors.password.message} />}
+          </div>
 
-        {/* {errors?.profile_picture?.message && (
-          <InputError error={errors.profile_picture.message} />
-        )} */}
-      </div>}
+          {/* Confirm Password */}
+          <div>
+            <Label htmlFor="confirmPassword">Confirm Password</Label>
+            <Input
+              type="password"
+              id="confirmPassword"
+              placeholder="Confirm password"
+              {...register("confirmPassword", {
+                required: "Confirm your password",
+                validate: (value) =>
+                  value === password || "Passwords do not match",
+              })}
+            />
+            {errors?.confirmPassword && (
+              <InputError error={errors.confirmPassword.message} />
+            )}
+          </div>
+        </>
+      )}
 
-
-      {updateForm || <div>
-        <Label htmlFor="password">Password</Label>
-        <Input
-          type="password"
-          id="password"
-          placeholder="Enter password"
-          {...register("password", {
-            required: "Password is required",
-            minLength: {
-              value: 8,
-              message: "Password must be at least 8 characters",
-            },
-          })}
-          className="border-2 border-[#141624] dark:border-[#3B3C4A] focus:outline-0 h-[40px] w-[300px]"
-        />
-        {errors?.password?.message && (
-          <InputError error={errors.password.message} />
-        )}
-      </div>}
-
-     {updateForm ||  <div>
-        <Label htmlFor="confirmPassword">Confirm Password</Label>
-        <Input
-          type="password"
-          id="confirmPassword"
-          placeholder="Confirm password"
-          {...register("confirmPassword", {
-            required: "Password is required",
-            minLength: {
-              value: 8,
-              message: "Password must be at least 8 characters",
-            },
-            validate: (value) => value === password || "Passwords do not match",
-          })}
-          className="border-2 border-[#141624] dark:border-[#3B3C4A] focus:outline-0 h-[40px] w-[300px]"
-        />
-        {errors?.confirmPassword?.message && (
-          <InputError error={errors.confirmPassword.message} />
-        )}
-      </div>}
-
+      {/* Submit Button */}
       <div className="w-full flex items-center justify-center flex-col my-4">
-        {updateForm ? (
-          <button className="bg-[#4B6BFB] text-white w-full py-3 px-2 rounded-md flex items-center justify-center gap-2">
-            {updateProfileMutation.isPending ? (
-              <>
-                <SmallSpinner />
-                <SmallSpinnerText text="Updating user..." />
-              </>
-            ) : (
-              <SmallSpinnerText text="Update user profile" />
-            )}
-          </button>
-        ) : (
-          <button className="bg-[#4B6BFB] text-white w-full py-3 px-2 rounded-md flex items-center justify-center gap-2">
-            {mutation.isPending ? (
-              <>
-                <SmallSpinner />
-                <SmallSpinnerText text="Creating user..." />
-              </>
-            ) : (
-              <SmallSpinnerText text="Signup" />
-            )}
-          </button>
+        <button className="bg-[#4B6BFB] text-white w-full py-3 px-2 rounded-md flex items-center justify-center gap-2">
+          {updateForm
+            ? updateProfileMutation.isPending
+              ? <>
+                  <SmallSpinner />
+                  <SmallSpinnerText text="Updating user..." />
+                </>
+              : <SmallSpinnerText text="Update user profile" />
+            : mutation.isPending
+              ? <>
+                  <SmallSpinner />
+                  <SmallSpinnerText text="Creating user..." />
+                </>
+              : <SmallSpinnerText text="Signup" />
+          }
+        </button>
+
+        {!updateForm && (
+          <p className="text-[14px] mt-2">
+            Already have an account? <Link to="/signin">Sign In</Link>
+          </p>
         )}
-       {updateForm || <p className="text-[14px]">
-          Already have an account? <Link to="/signin">Sign In</Link>
-        </p>}
       </div>
     </form>
   );

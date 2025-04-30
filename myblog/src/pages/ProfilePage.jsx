@@ -10,35 +10,24 @@ import { useState } from "react";
 
 const ProfilePage = ({ authUsername }) => {
   const [showModal, setShowModal] = useState(false);
-  const { username } = useParams();
 
   const toggleModal = () => {
-    setShowModal((curr) => !curr);
-  };
-
-  const {
-    isPending,
-    isError,
-    error,
-    data,
-  } = useQuery({
-    queryKey: ["users", username],
-    queryFn: () => getUserInfo(username),
-    retry: 1,
-  });
-
-  if (isPending) return <Spinner />;
-
-  if (isError || !data) {
-    console.error("Error loading user profile:", error);
-    return (
-      <div className="text-center text-red-500 mt-10">
-        ⚠️ Failed to load user profile. Please try again later.
-      </div>
-    );
+    setShowModal(curr => !curr)
   }
 
-  const blogs = data?.author_posts || [];
+
+  const { username } = useParams();
+
+  const { isPending, data } = useQuery({
+    queryKey: ["users", username],
+    queryFn: () => getUserInfo(username),
+  });
+
+  const blogs = data?.author_posts;
+
+  if (isPending) {
+    return <Spinner />;
+  }
 
   return (
     <>
@@ -47,12 +36,7 @@ const ProfilePage = ({ authUsername }) => {
 
       {showModal && (
         <Modal toggleModal={toggleModal}>
-          {/* Only render if data is valid and updateForm expected by SignupPage */}
-          <SignupPage
-            userInfo={data}
-            updateForm={true}
-            toggleModal={toggleModal}
-          />
+          <SignupPage userInfo={data} updateForm={true} toggleModal={toggleModal} />
         </Modal>
       )}
     </>

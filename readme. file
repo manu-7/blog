@@ -1,0 +1,36 @@
+Project Title: Personal Blog Web App
+
+Overview:
+
+This is a full-stack blog application where users can create, edit, and delete blog posts. The project focuses on content management with a clean UI and user-friendly experience. It serves as a basic CMS (Content Management System) built with Python and Django.
+
+
+---
+
+Key Features:
+
+Create / Edit / Delete Blog Posts
+Users can add new articles, modify existing ones, or delete them entirely.
+
+Post Listing and Detail View
+Homepage displays all blog posts with titles, summaries, and timestamps. Clicking on a post shows the full content.
+
+Django Admin Integration
+Admin panel to manage all posts easily.
+
+Responsive UI
+Clean, minimal, and mobile-friendly layout.
+
+
+
+---
+
+Tech Stack:
+
+Backend: Django (Python)
+
+Frontend: HTML, CSS, Django Templating
+
+Database: SQLite (default Django DB)
+
+Other Tools: Git, GitHub

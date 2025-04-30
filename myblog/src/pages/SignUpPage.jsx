@@ -10,7 +10,7 @@ import { useForm } from "react-hook-form";
 import { Link } from "react-router-dom";
 import { toast } from "react-toastify";
 
-const SignupPage = ({ userInfo, updateForm, toggleModal }) => {
+const SignUpPage = ({ userInfo, updateForm, toggleModal }) => {
 
   console.log(userInfo)
 
@@ -285,4 +285,4 @@ const SignupPage = ({ userInfo, updateForm, toggleModal }) => {
   );
 };
 
-export default SignupPage;
+export default SignUpPage;

@@ -5,7 +5,7 @@ import Spinner from "@/ui_components/Spinner";
 import Modal from "@/ui_components/Modal";
 import { useQuery } from "@tanstack/react-query";
 import { useParams, Link } from "react-router-dom";  // Import Link for navigation
-import SignUpPage from "./SignUpPage";
+import SignupPage from "./SignupPage";
 import { useState } from "react";
 
 const ProfilePage = ({ authUsername }) => {
@@ -37,7 +37,7 @@ const ProfilePage = ({ authUsername }) => {
 
       {showModal && (
         <Modal toggleModal={toggleModal}>
-          <SignUpPage userInfo={data} updateForm={true} toggleModal={toggleModal} />
+          <SignupPage userInfo={data} updateForm={true} toggleModal={toggleModal} />
         </Modal>
       )}
     </>

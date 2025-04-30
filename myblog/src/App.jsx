@@ -2,7 +2,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import AppLayout from "./ui_components/AppLayout";
 import HomePage from "./pages/HomePage";
 import DetailPage from "./pages/DetailPage";
-import SignUpPage from "./pages/SignUpPage";
+import SignupPage from "./pages/SignupPage";
 import CreatePostPage from "./pages/CreatePostPage";
 import LoginPage from "./pages/LoginPage";
 import ProtectedRoute from "./ui_components/ProtectedRoute";
@@ -11,7 +11,7 @@ import { useEffect, useState } from "react";
 import { getUsername } from "./services/apiBlog";
 import { useQuery } from "@tanstack/react-query";
 import NotFoundPage from "./pages/NotFoundPage";
-import SignUpPage from "./pages/SignUpPage";
+
 
 const App = () => {
   const [username, setUsername] = useState(null);
@@ -50,7 +50,7 @@ const App = () => {
           <Route path="*" element={<NotFoundPage />} />
           <Route path="profile/:username" element={<ProfilePage authUsername={username} />} />
           <Route path="blogs/:slug" element={<DetailPage username={username} isAuthenticated={isAuthenticated} />} />
-          <Route path="signup" element={<SignUpPage />} />
+          <Route path="signup" element={<SignupPage />} />
           <Route
             path="create"
             element={

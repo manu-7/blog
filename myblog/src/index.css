@@ -6,7 +6,27 @@
 
 
 
+.active {
+  font-weight: bold;
+  background-color: #4B6BFB;
+  color: white;
+  padding: 8px 16px;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+}
+nav a {
+  padding: 8px 16px;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+}
 
+nav a:hover {
+  background-color: #e0e0e0;
+}
+
+.dark nav a:hover {
+  background-color: #333;
+}
 
 
 @layer base {

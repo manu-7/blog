@@ -1,25 +1,26 @@
-import React from "react";
 import BlogCard from "./BlogCard";
 import Spinner from "./Spinner";
+import { Link } from "react-router-dom";  // Import Link for proper routing
 
-const BlogContainer = ({ blogs, isPending }) => {
+const BlogContainer = ({ isPending, blogs = [], title = "🍔 Latest Posts" }) => {
   if (isPending) {
     return <Spinner />;
   }
 
-  // Make sure blogs is an array before calling map
-  if (!Array.isArray(blogs)) {
-    return <div>Failed to load blogs.</div>;
-  }
-
   return (
-    <section className="padding-x py-6 max-container">
+    <section className="px-4 py-6 max-w-screen-xl mx-auto">
       <h2 className="font-semibold text-xl mb-6 dark:text-white text-center">
-        ✨Latest Posts
+        {title}
       </h2>
+
       <div className="flex items-center gap-6 justify-center flex-wrap">
         {blogs.map((blog) => (
-          <BlogCard key={blog.id} blog={blog} />
+          <div key={blog.id}>
+            {/* Ensure the blog links go to the correct absolute URL */}
+            <Link to={`/blogs/${blog.slug}`} className="block">
+              <BlogCard blog={blog} />
+            </Link>
+          </div>
         ))}
       </div>
     </section>

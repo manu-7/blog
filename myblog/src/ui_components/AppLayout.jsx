@@ -6,7 +6,7 @@ import Footer from "./Footer";
 import NavBar from "./NavBar";
 
 const AppLayout = ({ isAuthenticated, username, setIsAuthenticated, setUsername }) => {
-  useEffect(function () {
+  useEffect(() => {
     if (localStorage.getItem("dark") === null) {
       localStorage.setItem("dark", "false");
     }
@@ -24,7 +24,8 @@ const AppLayout = ({ isAuthenticated, username, setIsAuthenticated, setUsername 
 
   return (
     <div className={darkMode ? "dark" : ""}>
-      <main className="w-full bg-[#ffffff] dark:bg-[#181A2A]">
+      <div className="flex flex-col min-h-screen bg-[#ffffff] dark:bg-[#181A2A]">
+        {/* NavBar */}
         <NavBar
           darkMode={darkMode}
           handleDarkMode={handleDarkMode}
@@ -33,10 +34,18 @@ const AppLayout = ({ isAuthenticated, username, setIsAuthenticated, setUsername 
           setIsAuthenticated={setIsAuthenticated}
           setUsername={setUsername}
         />
+
+        {/* Toast notifications */}
         <ToastContainer />
-        <Outlet />
+
+        {/* Main content area that pushes footer to bottom if content is short */}
+        <main className="flex-grow">
+          <Outlet />
+        </main>
+
+        {/* Footer */}
         <Footer />
-      </main>
+      </div>
     </div>
   );
 };

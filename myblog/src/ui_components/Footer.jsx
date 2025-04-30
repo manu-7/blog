@@ -3,18 +3,20 @@ import { FaFacebookF } from "react-icons/fa";
 import { BsTwitterX } from "react-icons/bs";
 import { FaYoutube } from "react-icons/fa";
 import { CiMail } from "react-icons/ci";
+import { NavLink } from "react-router-dom";
 
 const Footer = () => {
+  const navLinkClass = ({ isActive }) =>
+    isActive ? "text-[#4B6BFB] font-semibold" : "hover:text-[#4B6BFB]";
+
   return (
     <footer className="bg-[#F6F6F7] padding-x py-16 max-container dark:bg-[#141624] pl-[2.5rem] pr-[2.5rem]">
       <div className="flex max-lg:gap-9 lg:gap-4 flex-wrap max-md:justify-center justify-between">
         <div className="w-[300px] flex flex-col gap-6 max-md:items-center">
-          <h1 className="text-[#141624] text-2xl dark:text-[#FFFFFF] ">
-            DevScribe
-          </h1>
+          <h1 className="text-[#141624] text-2xl dark:text-[#FFFFFF] ">MindFolio</h1>
 
           <p className="text-[14px] text-[#696A75] leading-[1.5]  max-md:text-center dark:text-[#97989F]">
-            DevScribe is a user-friendly Content Management System (CMS) that
+            MindFolio is a user-friendly Content Management System (CMS) that
             allows easy content creation and management. Built with React.js,
             Tailwind CSS, and Django, it offers features like user
             authentication and customizable light/dark themes.
@@ -22,16 +24,14 @@ const Footer = () => {
         </div>
 
         <div className="text-[#181A2A] text-[14px] flex flex-col gap-4 px-4 max-md:items-center">
-          <p className=" font-semibold text-[16px] dark:text-white">
-            Quick Links
-          </p>
+          <p className=" font-semibold text-[16px] dark:text-white">Quick Links</p>
           <ul className="flex flex-col gap-4  text-[#3B3C4A] max-md:items-center dark:text-[#97989F]">
-            <li>Home</li>
-            <li>About</li>
-            <li>Blog</li>
-            <li>Archived</li>
-            <li>Author</li>
-            <li>Contact</li>
+            <li><NavLink to="/" className={navLinkClass}>Home</NavLink></li>
+            <li><NavLink to="/about" className={navLinkClass}>About</NavLink></li>
+            <li><NavLink to="/blog" className={navLinkClass}>Blog</NavLink></li>
+            <li><NavLink to="/archived" className={navLinkClass}>Archived</NavLink></li>
+            <li><NavLink to="/authors" className={navLinkClass}>Author</NavLink></li>
+            <li><NavLink to="/contact" className={navLinkClass}>Contact</NavLink></li>
           </ul>
         </div>
 
@@ -48,9 +48,7 @@ const Footer = () => {
         </div>
 
         <div className="bg-white w-[350px] px-6 flex flex-col items-center justify-center gap-2  rounded-lg dark:bg-[#242535] py-6">
-          <h3 className="font-semibold text-xl  dark:text-white">
-            Weekly Newsletter
-          </h3>
+          <h3 className="font-semibold text-xl  dark:text-white">Weekly Newsletter</h3>
           <p className="text-[#696A75] text-[16px] mb-5 dark:text-[#97989F]">
             Get blog articles and offers via email
           </p>

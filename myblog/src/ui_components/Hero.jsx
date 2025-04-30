@@ -1,23 +1,19 @@
+import pic from "../images/banner.jpg";
 import { FaInstagram } from "react-icons/fa";
 import { FaFacebookF } from "react-icons/fa";
 import { BsTwitterX } from "react-icons/bs";
 import { FaYoutube } from "react-icons/fa";
 import { HiPencilAlt } from "react-icons/hi";
+import { BASE_URL } from "@/api";
 
 const Hero = ({ userInfo, authUsername, toggleModal }) => {
-  // Check if userInfo and profile_picture are available
-  const profilePicUrl = userInfo?.profile_picture
-    ? `${process.env.REACT_APP_BASE_URL}${userInfo.profile_picture}` // Dynamically set the profile picture URL
-    : '/default-profile-pic.jpg'; // Fallback image if profile picture is not available
-
   return (
     <div className="padding-x py-9 max-container flex flex-col items-center justify-center gap-4 bg-[#F6F6F7] dark:bg-[#242535] rounded-md">
       <div className="flex gap-4">
         <div className="w-[70px] h-[70px] rounded-full overflow-hidden">
           <img
-            src={profilePicUrl} // Use the dynamic image URL or fallback
+            src={`${BASE_URL}${userInfo?.profile_picture}`}
             className="w-[70px] h-[70px] rounded-full object-cover"
-            alt={`${userInfo?.first_name} ${userInfo?.last_name}`} // Add alt text for accessibility
           />
         </div>
 

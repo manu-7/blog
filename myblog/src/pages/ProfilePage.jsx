@@ -4,38 +4,35 @@ import Hero from "@/ui_components/Hero";
 import Spinner from "@/ui_components/Spinner";
 import Modal from "@/ui_components/Modal";
 import { useQuery } from "@tanstack/react-query";
-import { useParams } from "react-router-dom";
+import { useParams, Link } from "react-router-dom";  // Import Link for navigation
 import SignupPage from "./SignupPage";
 import { useState } from "react";
 
 const ProfilePage = ({ authUsername }) => {
   const [showModal, setShowModal] = useState(false);
-  const { username } = useParams();
 
   const toggleModal = () => {
-    setShowModal(curr => !curr);
+    setShowModal((curr) => !curr);
   };
 
-  const { isLoading, data, error } = useQuery({
+  const { username } = useParams();
+
+  const { isPending, data } = useQuery({
     queryKey: ["users", username],
     queryFn: () => getUserInfo(username),
-    enabled: !!username,  // Ensures query runs only when `username` is available
   });
+  console.log("User data:", data);
 
-  // Handle loading and error states
-  if (isLoading) {
+  const blogs = data?.author_posts;
+
+  if (isPending) {
     return <Spinner />;
   }
-
-  if (error) {
-    return <div>Error: {error.message}</div>;
-  }
-
-  const blogs = data?.author_posts || [];
 
   return (
     <>
       <Hero userInfo={data} authUsername={authUsername} toggleModal={toggleModal} />
+      {/* BlogContainer renders blog list, passing the slug correctly */}
       <BlogContainer blogs={blogs} title={`🍔 ${username}'s Posts`} />
 
       {showModal && (

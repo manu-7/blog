@@ -10,24 +10,32 @@ import { useState } from "react";
 
 const ProfilePage = ({ authUsername }) => {
   const [showModal, setShowModal] = useState(false);
-
-  const toggleModal = () => {
-    setShowModal(curr => !curr)
-  }
-
-
   const { username } = useParams();
 
-  const { isPending, data } = useQuery({
+  const toggleModal = () => {
+    setShowModal(curr => !curr);
+  };
+
+  // Handle missing username in URL
+  if (!username) {
+    return <div className="text-center mt-10 text-red-500">Invalid profile URL: Username not provided.</div>;
+  }
+
+  const { isPending, isError, error, data } = useQuery({
     queryKey: ["users", username],
     queryFn: () => getUserInfo(username),
+    enabled: !!username, // Avoid fetching with null/undefined
   });
-
-  const blogs = data?.author_posts;
 
   if (isPending) {
     return <Spinner />;
   }
+
+  if (isError) {
+    return <div className="text-center mt-10 text-red-500">Failed to load profile: {error.message}</div>;
+  }
+
+  const blogs = data?.author_posts;
 
   return (
     <>

@@ -19,11 +19,9 @@ const processQueue = (error, token = null) => {
       prom.resolve(token);
     }
   });
-
   failedQueue = [];
 };
 
-// Add request interceptor
 api.interceptors.request.use(
   async config => {
     const access = localStorage.getItem("access");
@@ -35,15 +33,27 @@ api.interceptors.request.use(
       if (decoded.exp < currentTime) {
         if (!isRefreshing) {
           isRefreshing = true;
+          const refresh = localStorage.getItem("refresh");
+
+          if (!refresh) {
+            processQueue(new Error("No refresh token available"), null);
+            throw new Error("No refresh token available");
+          }
+
           try {
-            const refresh = localStorage.getItem("refresh");
+            // ✅ Bypass interceptor by using raw axios (not `api`)
             const response = await axios.post(`${BASE_URL}/token_refresh/`, { refresh });
+
             const newAccess = response.data.access;
             localStorage.setItem("access", newAccess);
-            config.headers.Authorization = `Bearer ${newAccess}`;
             processQueue(null, newAccess);
+
+            // Apply token to original request
+            config.headers.Authorization = `Bearer ${newAccess}`;
           } catch (err) {
             processQueue(err, null);
+            localStorage.removeItem("access");
+            localStorage.removeItem("refresh");
             throw err;
           } finally {
             isRefreshing = false;
@@ -68,12 +78,10 @@ api.interceptors.request.use(
 
     return config;
   },
-  error => {
-    return Promise.reject(error);
-  }
+  error => Promise.reject(error)
 );
 
-// Optional: Response interceptor to catch 401 globally
+// Optional: catch all 401s
 api.interceptors.response.use(
   response => response,
   error => {

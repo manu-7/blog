@@ -141,7 +141,7 @@ const CreatePostPage = ({ blog, isAuthenticated }) => {
               <SelectTrigger className="border-2 border-[#141624] dark:border-[#3B3C4A] focus:outline-0 h-[40px] w-full max-sm:w-[300px] max-sm:text-[14px]">
                 <SelectValue placeholder="Select a category" />
               </SelectTrigger>
-              <SelectContent>
+              <SelectContent className="z-10 max-h-[200px] overflow-y-auto bg-[#f5f5f5] dark:bg-[#222324] text-black dark:text-white">
                 <SelectGroup>
                   <SelectLabel>Categories</SelectLabel>
                   <SelectItem value="Frontend">Frontend</SelectItem>
